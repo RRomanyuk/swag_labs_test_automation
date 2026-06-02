@@ -14,7 +14,7 @@ BURGER_MENU = ("xpath", "//a[@class='bm-item menu-item']")
 
 LOGOUT_BUTTON = ("xpath", "//a[@id='logout_sidebar_link']")
 
-ADD_TO_CART_BUTTON = ("xpath", "//button[@id='add-to-cart-sauce-labs-backpack']")
+ADD_TO_CART_BUTTON = ("xpath", "//button[@id='add-to-cart-sauce-labs-fleece-jacket']")
 
 SHOPPING_CART_BADGE = ("xpath", "//span[@class='shopping_cart_badge']")
 

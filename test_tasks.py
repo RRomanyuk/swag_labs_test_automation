@@ -1,3 +1,4 @@
+import time
 from itertools import count
 
 from selenium import webdriver
@@ -41,15 +42,15 @@ def login(username, password):
 
 
 def get_sorted_expected(name_sorted):
-
+    pairs = list(zip(EXPECTED_PRICES, EXPECTED_ITEMS))
     if name_sorted == 'az':
         return sorted(EXPECTED_ITEMS)
     elif name_sorted == 'za':
         return sorted(EXPECTED_ITEMS, reverse=True)
     elif name_sorted == 'lohi':
-        return [item for _, item in sorted(zip(EXPECTED_PRICES, EXPECTED_ITEMS))]
+        return [item for _, item in sorted(pairs, key=lambda x: (x[0], x[1]))]
     elif name_sorted == 'hilo':
-        return [item for _, item in sorted(zip(EXPECTED_PRICES, EXPECTED_ITEMS), reverse=True)]
+        return [item for _, item in sorted(pairs, key=lambda x: (-x[0], x[1]))]
 
 
 def sorted_items(name_sorted):
@@ -90,7 +91,7 @@ def test_logout():
     login("standard_user", "secret_sauce")
     driver.find_element(*BURGER_BUTTON).click()
     count_items = len(driver.find_elements(*BURGER_MENU))
-    #assert count_items == 4, "TC4: Burger menu does not have 4 items"
+    assert count_items == 4, "Burger menu does not have 4 items"
     logout = driver.find_element(*LOGOUT_BUTTON)
     wait.until(EC.element_to_be_clickable(logout)).click()
     assert "/inventory" not in driver.current_url, "Logout failed"
@@ -138,29 +139,28 @@ def test_footer_links():
     twitter.click()
     tabs = driver.window_handles
     driver.switch_to.window(tabs[1])
-    assert "https://x.com/saucelabs" == driver.current_url
+    assert driver.current_url == "https://x.com/saucelabs", "Link is not corrected"
     driver.close()
 
     driver.switch_to.window(tabs[0])
     facebook.click()
     tabs = driver.window_handles
     driver.switch_to.window(tabs[1])
-    assert "https://www.facebook.com/saucelabs" == driver.current_url
+    assert driver.current_url == "https://www.facebook.com/saucelabs", "Link is not corrected"
     driver.close()
 
     driver.switch_to.window(tabs[0])
     linkedin.click()
     tabs = driver.window_handles
     driver.switch_to.window(tabs[1])
-    assert "https://www.linkedin.com/company/sauce-labs/" == driver.current_url
+    assert driver.current_url == "https://www.linkedin.com/company/sauce-labs/", "Link is not corrected"
     driver.close()
     driver.switch_to.window(tabs[0])
 
 
 def test_valid_checkout():
 
-    login("standard_user", "secret_sauce")
-    driver.find_element(*ADD_TO_CART_BUTTON).click()
+    login("standard_user", "secret_sauce") # Cart not empty
     assert driver.find_element(*SHOPPING_CART_BADGE).text == '1', 'Item not added to cart'
 
     driver.find_element(*CART_BUTTON).click()
